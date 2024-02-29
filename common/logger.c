@@ -3,18 +3,28 @@
 #include <errno.h>
 #include <string.h>
 
-#define REDBG "\e[0;41m"
 #define WHTBG "\e[0;47m"
+#define BGRBG "\e[0;102m"
+#define REDBG "\e[0;41m"
 #define RESET "\e[0m"
+
+typedef enum message_type {
+  INFO,
+  SUCCESS,
+  ERROR,
+} message_type;
 
 void msg_internal(
     const char *message,
     const char *title,
-    bool is_error,
+    message_type type,
     bool use_errno
 ) {
   char *title_color = WHTBG;
-  if (is_error) {
+  if      (type == SUCCESS) {
+    title_color = BGRBG;
+  }
+  else if (type == ERROR) {
     title_color = REDBG;
   }
 
@@ -25,16 +35,20 @@ void msg_internal(
     fprintf(stdout, "%s\n", message);
   }
 
-  if (is_error && use_errno) {
+  if (type == ERROR && use_errno) {
     const char *error_message = strerror(errno);
     fprintf(stderr, "%s Error %s %s\n", REDBG, RESET, error_message);
   }
 }
 
 void info(const char *message, const char *title) {
-  msg_internal(message, title, false, false);
+  msg_internal(message, title, INFO, false);
+}
+
+void success(const char *message, const char *title) {
+  msg_internal(message, title, SUCCESS, false);
 }
 
 void error(const char *message, const char *title, bool use_errno) {
-  msg_internal(message, title, true, use_errno);
+  msg_internal(message, title, ERROR, use_errno);
 }
