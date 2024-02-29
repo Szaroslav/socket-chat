@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 
+#define SUCCESS_TITLE "Success"
+#define ERROR_TITLE   "Error  "
+
 void info(const char *message, const char *title);
 void success(const char *message, const char *title);
 void error(const char *message, const char *title, bool use_errno);
