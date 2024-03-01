@@ -5,12 +5,14 @@
 
 #define WHTBG "\e[0;47m"
 #define BGRBG "\e[0;102m"
+#define YELBG "\e[0;43m"
 #define REDBG "\e[0;41m"
 #define RESET "\e[0m"
 
 typedef enum message_type {
   INFO,
   SUCCESS,
+  WARN,
   ERROR,
 } message_type;
 
@@ -21,11 +23,19 @@ void msg_internal(
     bool use_errno
 ) {
   char *title_color = WHTBG;
-  if      (type == SUCCESS) {
-    title_color = BGRBG;
-  }
-  else if (type == ERROR) {
-    title_color = REDBG;
+  switch (type) {
+    case SUCCESS: {
+      title_color = BGRBG;
+      break;
+    }
+    case WARN: {
+      title_color = YELBG;
+      break;
+    }
+    case ERROR: {
+      title_color = REDBG;
+      break;
+    }
   }
 
   if (title != NULL) {
@@ -47,6 +57,10 @@ void info(const char *message, const char *title) {
 
 void success(const char *message, const char *title) {
   msg_internal(message, title, SUCCESS, false);
+}
+
+void warn(const char *message, const char *title) {
+  msg_internal(message, title, WARN, false);
 }
 
 void error(const char *message, const char *title, bool use_errno) {
