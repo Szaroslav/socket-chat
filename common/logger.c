@@ -37,7 +37,7 @@ void msg_internal(
 
   if (type == ERROR && use_errno) {
     const char *error_message = strerror(errno);
-    fprintf(stderr, "%s Error %s %s\n", REDBG, RESET, error_message);
+    fprintf(stderr, "%s %s %s %s\n", REDBG, ERROR_TITLE, RESET, error_message);
   }
 }
 
