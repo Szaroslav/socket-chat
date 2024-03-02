@@ -22,8 +22,12 @@ void msg_internal(
     message_type type,
     bool use_errno
 ) {
-  char *title_color = WHTBG;
+  char *title_color;
   switch (type) {
+    case INFO: {
+      title_color = WHTBG;
+      break;
+    }
     case SUCCESS: {
       title_color = BGRBG;
       break;
