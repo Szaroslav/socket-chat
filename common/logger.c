@@ -22,6 +22,11 @@ void msg_internal(
     message_type type,
     bool use_errno
 ) {
+  FILE *out = stdout;
+  if (type == ERROR) {
+    out = stderr;
+  }
+
   char *title_color;
   switch (type) {
     case INFO: {
@@ -43,10 +48,10 @@ void msg_internal(
   }
 
   if (title != NULL) {
-    fprintf(stdout, "%s %s %s %s\n", title_color, title, RESET, message);
+    fprintf(out, "%s %s %s %s\n", title_color, title, RESET, message);
   }
   else {
-    fprintf(stdout, "%s\n", message);
+    fprintf(out, "%s\n", message);
   }
 
   if (type == ERROR && use_errno) {
