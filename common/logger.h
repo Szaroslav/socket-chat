@@ -7,9 +7,10 @@
 #define WARNING_TITLE "Warning"
 #define ERROR_TITLE   "Error  "
 
-void info   (const char *message, const char *title                );
-void success(const char *message, const char *title                );
-void warn   (const char *message, const char *title                );
-void error  (const char *message, const char *title, bool use_errno);
+void info    (const char *message, const char *title                );
+void info_wnl(const char *message, const char *title                );
+void success (const char *message, const char *title                );
+void warn    (const char *message, const char *title                );
+void error   (const char *message, const char *title, bool use_errno);
 
 #endif // __LOGGER_H__

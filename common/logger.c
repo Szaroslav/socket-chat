@@ -20,12 +20,11 @@ void msg_internal(
     const char *message,
     const char *title,
     message_type type,
+    bool print_new_line,
     bool use_errno
 ) {
-  FILE *out = stdout;
-  if (type == ERROR) {
-    out = stderr;
-  }
+  FILE *out                 = type != ERROR ? stdout : stderr;
+  const char line_separator = print_new_line ? '\n' : '\0';
 
   char *title_color;
   switch (type) {
@@ -48,7 +47,10 @@ void msg_internal(
   }
 
   if (title != NULL) {
-    fprintf(out, "%s %s %s %s\n", title_color, title, RESET, message);
+    fprintf(
+      out,
+      "%s %s %s %s%c",
+      title_color, title, RESET, message, line_separator);
   }
   else {
     fprintf(out, "%s\n", message);
@@ -61,17 +63,21 @@ void msg_internal(
 }
 
 void info(const char *message, const char *title) {
-  msg_internal(message, title, INFO, false);
+  msg_internal(message, title, INFO, true, false);
+}
+
+void info_wnl(const char *message, const char *title) {
+  msg_internal(message, title, INFO, false, false);
 }
 
 void success(const char *message, const char *title) {
-  msg_internal(message, title, SUCCESS, false);
+  msg_internal(message, title, SUCCESS, true, false);
 }
 
 void warn(const char *message, const char *title) {
-  msg_internal(message, title, WARN, false);
+  msg_internal(message, title, WARN, true, false);
 }
 
 void error(const char *message, const char *title, bool use_errno) {
-  msg_internal(message, title, ERROR, use_errno);
+  msg_internal(message, title, ERROR, true, use_errno);
 }
