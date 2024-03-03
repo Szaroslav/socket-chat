@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 
+#define INFO_TITLE    "Info   "
 #define SUCCESS_TITLE "Success"
 #define WARNING_TITLE "Warning"
 #define ERROR_TITLE   "Error  "
