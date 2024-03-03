@@ -8,10 +8,20 @@
 #include <unistd.h>
 
 
-#define   BUFFER_SIZE           64
-const int EXIT_MESSAGE_LENGTH = strlen(EXIT_MESSAGE);
+#define   BUFFER_SIZE            64
+const int HELLO_MESSAGE_LENGTH = strlen(HELLO_MESSAGE);
+const int EXIT_MESSAGE_LENGTH  = strlen(EXIT_MESSAGE);
 
 static char buffer[BUFFER_SIZE];
+
+bool js_is_hello_message(const char *message) {
+  for (int i = 0; i < HELLO_MESSAGE_LENGTH; i++) {
+    if (message[i] != HELLO_MESSAGE[i]) {
+      return false;
+    }
+  }
+  return true;
+}
 
 void js_init_connection_array(connection *connections, int size) {
   memset(connections, 0, size * sizeof(connection));
