@@ -2,6 +2,7 @@
 
 #include "../common/logger.h"
 #include "../common/signal.h"
+#include "../common/fd.h"
 #include "../common/socket.h"
 #include "../common/connection.h"
 #include "../server/server.h"
@@ -10,7 +11,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <fcntl.h>
 #include <signal.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -66,7 +66,7 @@ void init() {
 
   atexit(handle_exit);
   js_init_sigint(handle_sigint);
-  fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
+  js_fd_nonblock(STDIN_FILENO);
 
   socket_fd = js_socket(AF_INET, SOCK_STREAM, 0);
 
@@ -82,7 +82,7 @@ void init() {
   server_address.sin_port        = htons(PORT);
 
   js_socket_connect(socket_fd, (struct sockaddr *) &server_address, sizeof(server_address));
-  fcntl(socket_fd, F_SETFL, O_NONBLOCK);
+  js_fd_nonblock(socket_fd);
 }
 
 void handle_exit() {
