@@ -7,7 +7,7 @@
 
 
 int js_socket(int domain, int type, int protocol) {
-  const int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+  const int socket_fd = socket(domain, type, protocol);
   if (socket_fd == SOCKET_FAILURE) {
       error("Socket creation failed", ERROR_TITLE, true);
       exit(EXIT_FAILURE);
