@@ -26,7 +26,7 @@ void msg_internal(
   FILE *out                 = type != ERROR ? stdout : stderr;
   const char line_separator = print_new_line ? '\n' : '\0';
 
-  char *title_color;
+  char *title_color = WHTBG;
   switch (type) {
     case INFO: {
       title_color = WHTBG;
