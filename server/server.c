@@ -25,7 +25,7 @@
 #define RESET                    "\e[0m"
 
 static bool       exited;
-static int        socket_fd;
+static int        tcp_socket_fd;
 static connection connections[MAX_ONGOING_CONNECTIONS_COUNT];
 static char       buffer[BUFSIZ];
 static char       message[MAX_MESSAGE_SIZE_BYTES];
@@ -50,16 +50,15 @@ void init() {
   js_init_sigint(handle_sigint);
   js_init_connection_array(connections, MAX_ONGOING_CONNECTIONS_COUNT);
 
-  socket_fd = js_socket(AF_INET, SOCK_STREAM, 0);
-
   struct sockaddr_in server_address;
   memset(&server_address, 0, sizeof(server_address));
   server_address.sin_family      = AF_INET;
   server_address.sin_addr.s_addr = INADDR_ANY;
   server_address.sin_port        = htons(PORT);
 
-  js_socket_bind(socket_fd, (struct sockaddr *) &server_address, sizeof(server_address));
-  js_socket_listen(socket_fd, MAX_PENDING_CONNECTIONS_COUNT);
+  tcp_socket_fd = js_socket(AF_INET, SOCK_STREAM, 0);
+  js_socket_bind(tcp_socket_fd, (struct sockaddr *) &server_address, sizeof(server_address));
+  js_socket_listen(tcp_socket_fd, MAX_PENDING_CONNECTIONS_COUNT);
 }
 
 void handle_exit() {
@@ -79,8 +78,8 @@ void handle_exit() {
     }
     js_thread_join(connections[i].thread, NULL);
   }
-  if (socket_fd != SOCKET_UNDEFINED) {
-    js_socket_close(&socket_fd);
+  if (tcp_socket_fd != SOCKET_UNDEFINED) {
+    js_socket_close(&tcp_socket_fd);
   }
 
   exited = true;
@@ -96,7 +95,7 @@ void handle_connections() {
     struct sockaddr_in client_address;
 
     const int connection_fd = js_socket_accept(
-      socket_fd, (struct sockaddr *) &client_address, &client_address_length);
+      tcp_socket_fd, (struct sockaddr *) &client_address, &client_address_length);
 
     const int connection_id = js_connection(
       connections, MAX_ONGOING_CONNECTIONS_COUNT, connection_fd);

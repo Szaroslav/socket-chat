@@ -26,10 +26,10 @@
 #define SOCKET_FD_POOL_ID      1
 #define POLL_INFINITE_TIMEOUT  -1
 
-static bool exited;
-static char buffer[BUFSIZ];
-static char message[MAX_MESSAGE_SIZE_BYTES];
-static int  socket_fd;
+static bool          exited;
+static char          buffer[BUFSIZ];
+static char          message[MAX_MESSAGE_SIZE_BYTES];
+static int           tcp_socket_fd;
 static struct pollfd file_descriptor_pool[FILE_DESCRIPTORS_COUNT];
 
 void   init                  ();
@@ -49,7 +49,7 @@ int main() {
       send_message(message);
     }
     if (file_descriptor_pool[SOCKET_FD_POOL_ID].revents & POLLIN) {
-      js_socket_read(socket_fd, buffer, BUFSIZ);
+      js_socket_read(tcp_socket_fd, buffer, BUFSIZ);
       if (strcmp(buffer, EXIT_MESSAGE) == EQUAL_STRINGS) {
         printf(SIGINT_SYMBOL);
         raise(SIGINT);
@@ -68,11 +68,11 @@ void init() {
   js_init_sigint(handle_sigint);
   js_fd_nonblock(STDIN_FILENO);
 
-  socket_fd = js_socket(AF_INET, SOCK_STREAM, 0);
+  tcp_socket_fd = js_socket(AF_INET, SOCK_STREAM, 0);
 
   file_descriptor_pool[STDIN_FD_POOL_ID ].fd     = STDIN_FILENO;
   file_descriptor_pool[STDIN_FD_POOL_ID ].events = POLLIN;
-  file_descriptor_pool[SOCKET_FD_POOL_ID].fd     = socket_fd;
+  file_descriptor_pool[SOCKET_FD_POOL_ID].fd     = tcp_socket_fd;
   file_descriptor_pool[SOCKET_FD_POOL_ID].events = POLLIN;
 
   struct sockaddr_in server_address;
@@ -81,8 +81,8 @@ void init() {
   server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
   server_address.sin_port        = htons(PORT);
 
-  js_socket_connect(socket_fd, (struct sockaddr *) &server_address, sizeof(server_address));
-  js_fd_nonblock(socket_fd);
+  js_socket_connect(tcp_socket_fd, (struct sockaddr *) &server_address, sizeof(server_address));
+  js_fd_nonblock(tcp_socket_fd);
 }
 
 void handle_exit() {
@@ -90,9 +90,9 @@ void handle_exit() {
     return;
   }
 
-  if (socket_fd != SOCKET_UNDEFINED) {
-    js_socket_write(socket_fd, EXIT_MESSAGE, EXIT_MESSAGE_LENGTH + 1);
-    js_socket_close(&socket_fd);
+  if (tcp_socket_fd != SOCKET_UNDEFINED) {
+    js_socket_write(tcp_socket_fd, EXIT_MESSAGE, EXIT_MESSAGE_LENGTH + 1);
+    js_socket_close(&tcp_socket_fd);
   }
   exited = true;
 }
@@ -110,5 +110,5 @@ char * get_message_from_stdin() {
 void send_message(const char *message) {
   sprintf(buffer, "Sending message: \"%s\"", message);
   info(buffer, CLIENT_TITLE);
-  js_socket_write(socket_fd, message, strlen(message) + 1);
+  js_socket_write(tcp_socket_fd, message, strlen(message) + 1);
 }
