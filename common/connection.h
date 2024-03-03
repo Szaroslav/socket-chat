@@ -26,7 +26,7 @@ typedef struct connection {
 
 typedef struct connection_params {
   int id;
-  int socket_fd;
+  int tcp_socket_fd;
 } connection_params;
 
 bool js_is_hello(const char *message);

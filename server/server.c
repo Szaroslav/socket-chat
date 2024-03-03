@@ -104,8 +104,8 @@ void handle_connections() {
     }
 
     connection_params params = {
-      .id        = connection_id,
-      .socket_fd = connection_fd,
+      .id            = connection_id,
+      .tcp_socket_fd = connection_fd,
     };
 
     js_thread(
@@ -119,10 +119,10 @@ void handle_connections() {
 void * handle_connection(void *params) {
   connection_params *p    = (connection_params *) params;
   const int connection_id = p->id,
-            socket_fd     = p->socket_fd;
+            tcp_socket_fd = p->tcp_socket_fd;
 
   while (true) {
-    js_socket_read(socket_fd, message, MAX_MESSAGE_SIZE_BYTES);
+    js_socket_read(tcp_socket_fd, message, MAX_MESSAGE_SIZE_BYTES);
 
     const bool terminate_connection = strcmp(message, EXIT_MESSAGE) == EQUAL_STRINGS
       && connections[connection_id].active;
@@ -150,6 +150,6 @@ void send_message_to_others(const char *message, int connection_id) {
       buffer,
       "%s %s%2d %s %s",
       WHTBG, CLIENT_TITLE_WITH_ID, i, RESET, message);
-    js_socket_write(connections[i].socket_fd, buffer, strlen(buffer) + 1);
+    js_socket_write(connections[i].tcp_socket_fd, buffer, strlen(buffer) + 1);
   }
 }
