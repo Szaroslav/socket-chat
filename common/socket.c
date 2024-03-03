@@ -22,7 +22,7 @@ int js_socket_read(int socket_fd, char *buffer, int max_bytes_to_read) {
     error("Socket reading failed", ERROR_TITLE, true);
     exit(SOCKET_READ_FAILURE);
   }
-  success("Socket reading suceeded", SUCCESS_TITLE);
+  success("Socket reading succeeded", SUCCESS_TITLE);
   return read_bytes;
 }
 
@@ -32,7 +32,7 @@ int js_socket_write(int socket_fd, const char *buffer, int max_bytes_to_write) {
     error("Socket writing failed", ERROR_TITLE, true);
     exit(SOCKET_WRITE_FAILURE);
   }
-  success("Socket writing suceeded", SUCCESS_TITLE);
+  success("Socket writing succeeded", SUCCESS_TITLE);
   return write_bytes;
 }
 
