@@ -42,7 +42,7 @@ int main() {
   init();
 
   while (true) {
-    poll(file_descriptor_pool, FILE_DESCRIPTORS_COUNT, POLL_INFINITE_TIMEOUT);
+    js_poll(file_descriptor_pool, FILE_DESCRIPTORS_COUNT, INFINITE_TIMEOUT);
 
     if (file_descriptor_pool[STDIN_FD_POOL_ID].revents & POLLIN) {
       const char *message = get_message_from_stdin();
