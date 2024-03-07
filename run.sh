@@ -16,16 +16,11 @@ if [[ "$1" == "$SERVER_NAME" ]]; then
   dependencies+=(
     "${DEPENDENCIES_DIR}/connection.c"
     "${DEPENDENCIES_DIR}/thread.c"
-    "${CLIENT_NAME}/${CLIENT_NAME}.c"
   )
-elif [[ "$1" == "$CLIENT_NAME" ]]; then
-  dependencies+=(
-    "${SERVER_NAME}/${SERVER_NAME}t.c"
-  )
-else
+elif [[ "$1" != "$CLIENT_NAME" ]]; then
   exit 1
 fi
 
 mkdir -p $BUILD_DIR                                             \
-  && gcc -Wall -O3 $dependencies "$1/$1.c" -o "${BUILD_DIR}/$1" \
+  && gcc -Wall -O3 ${dependencies[@]} "$1/$1.c" -o "${BUILD_DIR}/$1" \
   && ${BUILD_DIR}/$1
