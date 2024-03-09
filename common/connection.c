@@ -1,5 +1,7 @@
 #include "connection.h"
+#include "byte.h"
 #include "logger.h"
+#include "socket.h"
 #include "thread.h"
 
 #include <netinet/in.h>
@@ -31,11 +33,12 @@ void js_udp_hello(
     const sockaddr *destination_address,
     socklen_t address_length
 ) {
-  sprintf(buffer, "%d%s", connection_id, HELLO_MESSAGE);
+  int_to_bytes((byte *) buffer, connection_id);
+  sprintf(buffer + UDP_HEADER_SIZE_BYTES, HELLO_MESSAGE);
   int sent_bytes = js_socket_send_to(
     socket_fd,
     buffer,
-    strlen(buffer) + 1,
+    UDP_HEADER_SIZE_BYTES + strlen(buffer + UDP_HEADER_SIZE_BYTES) + 1,
     destination_address,
     address_length,
     MSG_DONTWAIT);
@@ -47,8 +50,7 @@ void js_udp_hello(
 }
 
 int js_connection_id_from_udp_message(const char *message) {
-  char connection_id;
-  sscanf(message, "%hhd", &connection_id);
+  int connection_id = bytes_to_int((byte *) message);
   return connection_id;
 }
 

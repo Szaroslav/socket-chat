@@ -1,6 +1,7 @@
 #include "server.h"
 
 #include "../common/logger.h"
+#include "../common/byte.h"
 #include "../common/string.h"
 #include "../common/signal.h"
 #include "../common/fd.h"
@@ -175,7 +176,7 @@ void * handle_tcp_connection(void *params) {
   const int connection_id = p->id,
             tcp_socket_fd = p->tcp_socket_fd;
 
-  sprintf(message, "%d", connection_id);
+  int_to_bytes((byte *) message, connection_id);
   js_socket_write(tcp_socket_fd, message, MAX_MESSAGE_SIZE_BYTES);
 
   while (true) {
@@ -206,8 +207,8 @@ void receive_udp_message() {
     (sockaddr *) &client_address,
     &client_address_length,
     MSG_WAITALL);
-  udp_connection_id = js_connection_id_from_udp_message(message);
-  strcpy(message, buffer + 1);
+  udp_connection_id = js_connection_id_from_udp_message(buffer);
+  strcpy(message, buffer + UDP_HEADER_SIZE_BYTES);
 }
 
 void send_message_to_others(const char *message, socket_type type, int connection_id) {

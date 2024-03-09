@@ -6,6 +6,8 @@
 #include <unistd.h>
 
 
+u_short UDP_HEADER_SIZE_BYTES = sizeof(int);
+
 int js_socket(int domain, int type, int protocol) {
   const int socket_fd = socket(domain, type, protocol);
   if (socket_fd == SOCKET_FAILURE) {

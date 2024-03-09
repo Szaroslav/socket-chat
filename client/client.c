@@ -1,6 +1,7 @@
 #include "client.h"
 
 #include "../common/logger.h"
+#include "../common/byte.h"
 #include "../common/string.h"
 #include "../common/signal.h"
 #include "../common/fd.h"
@@ -70,14 +71,19 @@ int main() {
       printf("%s\n", buffer);
     }
     if (file_descriptor_pool[UDP_SOCKET_FD_POOL_ID].revents & POLLIN) {
-      js_socket_receive_from(
+      int received_bytes = js_socket_receive_from(
         udp_socket_fd,
         buffer,
         MAX_MESSAGE_SIZE_BYTES,
         (sockaddr *) &server_address,
         &server_address_length,
         MSG_DONTWAIT);
-      printf("%s\n", buffer);
+      if (buffer[received_bytes - 1] == '\n') {
+        printf("%s", buffer);
+      }
+      else {
+        printf("%s\n", buffer);
+      }
     }
   }
 
@@ -103,7 +109,7 @@ void init() {
   js_socket_connect(
     tcp_socket_fd, (sockaddr *) &server_address, sizeof(server_address));
   js_socket_read(tcp_socket_fd, message, MAX_MESSAGE_SIZE_BYTES);
-  connection_id = strtol(message, NULL, 10);
+  connection_id = bytes_to_int((byte *) message);
   js_fd_nonblock(tcp_socket_fd);
   file_descriptor_pool[TCP_SOCKET_FD_POOL_ID].fd     = tcp_socket_fd;
   file_descriptor_pool[TCP_SOCKET_FD_POOL_ID].events = POLLIN;
@@ -176,11 +182,12 @@ void send_tcp_message(const char *message) {
 
 void send_udp_message(const char *message) {
   info("Sending message via UDP", CLIENT_TITLE);
-  sprintf(buffer, "%hhd%s", connection_id, message);
+  int_to_bytes((byte *) buffer, connection_id);
+  sprintf(buffer + UDP_HEADER_SIZE_BYTES, "%s", message);
   js_socket_send_to(
     udp_socket_fd,
     buffer,
-    strlen(buffer) + 1,
+    UDP_HEADER_SIZE_BYTES + strlen(buffer + UDP_HEADER_SIZE_BYTES) + 1,
     (const sockaddr *) &server_address,
     sizeof(server_address),
     MSG_DONTWAIT);

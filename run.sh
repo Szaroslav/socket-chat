@@ -6,6 +6,7 @@ BUILD_DIR="build"
 DEPENDENCIES_DIR="common"
 dependencies=(
   "${DEPENDENCIES_DIR}/logger.c"
+  "${DEPENDENCIES_DIR}/byte.c"
   "${DEPENDENCIES_DIR}/string.c"
   "${DEPENDENCIES_DIR}/signal.c"
   "${DEPENDENCIES_DIR}/fd.c"

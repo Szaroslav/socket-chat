@@ -2,16 +2,17 @@
 #define __SOCKET_H__
 
 #include <sys/socket.h>
+#include <sys/types.h>
 
-#define SOCKET_SUCCESS         0
-#define SOCKET_FAILURE         -1
-#define SOCKET_UNDEFINED       -1
-#define SOCKET_READ_FAILURE    -1
-#define SOCKET_RECEIVE_FAILURE -1
-#define SOCKET_WRITE_FAILURE   -1
-#define SOCKET_SEND_FAILURE    -1
-#define MAX_MESSAGE_SIZE_BYTES 4096
-#define UDP_HEADER_SIZE_BYTES  1
+#define SOCKET_SUCCESS               0
+#define SOCKET_FAILURE               -1
+#define SOCKET_UNDEFINED             -1
+#define SOCKET_READ_FAILURE          -1
+#define SOCKET_RECEIVE_FAILURE       -1
+#define SOCKET_WRITE_FAILURE         -1
+#define SOCKET_SEND_FAILURE          -1
+#define MAX_MESSAGE_SIZE_BYTES       4096
+extern u_short UDP_HEADER_SIZE_BYTES;
 
 typedef enum socket_type {
   TCP = SOCK_STREAM,
