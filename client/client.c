@@ -146,12 +146,14 @@ char * input(int mode) {
     }
   }
   else if (mode == UDP) {
+    const int real_num_of_bytes = MAX_MESSAGE_SIZE_BYTES - UDP_HEADER_SIZE_BYTES;
+
     int i = 0;
     while (true) {
       js_poll(file_descriptor_pool, ONLY_STDIN_FD, INFINITE_TIMEOUT);
 
       char ch;
-      while ((ch = fgetc(stdin)) != EOF && i < MAX_MESSAGE_SIZE_BYTES) {
+      while ((ch = fgetc(stdin)) != EOF && i < real_num_of_bytes) {
         message[i++] = ch;
       }
 
