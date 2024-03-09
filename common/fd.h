@@ -1,7 +1,6 @@
 #ifndef __FILE_DESCRIPTOR_H__
 #define __FILE_DESCRIPTOR_H__
 
-#define _GNU_SOURCE
 #include <poll.h>
 
 #define INFINITE_TIMEOUT -1
