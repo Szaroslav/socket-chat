@@ -4,6 +4,7 @@ SERVER_NAME="server"
 CLIENT_NAME="client"
 BUILD_DIR="build"
 DEPENDENCIES_DIR="common"
+cflags="-Wall -O3"
 dependencies=(
   "${DEPENDENCIES_DIR}/logger.c"
   "${DEPENDENCIES_DIR}/byte.c"
@@ -22,6 +23,10 @@ elif [[ "$1" != "$CLIENT_NAME" ]]; then
   exit 1
 fi
 
-mkdir -p $BUILD_DIR                                                  \
-  && gcc -Wall -O3 ${dependencies[@]} "$1/$1.c" -o "${BUILD_DIR}/$1" \
+if [[ "$2" == "-p" || "$2" == "--production" ]]; then
+  cflags="${cflags} -D PRODUCTION"
+fi
+
+mkdir -p $BUILD_DIR                                                \
+  && gcc $cflags ${dependencies[@]} "$1/$1.c" -o "${BUILD_DIR}/$1" \
   && ${BUILD_DIR}/$1
