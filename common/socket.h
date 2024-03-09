@@ -11,6 +11,7 @@
 #define SOCKET_WRITE_FAILURE   -1
 #define SOCKET_SEND_FAILURE    -1
 #define MAX_MESSAGE_SIZE_BYTES 4096
+#define UDP_HEADER_SIZE_BYTES  1
 
 typedef enum socket_type {
   TCP = SOCK_STREAM,

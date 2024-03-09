@@ -14,7 +14,6 @@
 extern const int HELLO_MESSAGE_LENGTH;
 #define          EXIT_MESSAGE          "EXIT"
 extern const int EXIT_MESSAGE_LENGTH;
-#define          UDP_HEADER_SIZE_BYTES 1
 
 typedef struct connection {
   bool               tcp_active;

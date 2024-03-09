@@ -16,6 +16,7 @@
     "buffer": "c",
     "string.h": "c",
     "unistd.h": "c",
-    "thread.h": "c"
+    "thread.h": "c",
+    "socket": "c"
   }
 }
