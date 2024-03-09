@@ -63,15 +63,21 @@ void msg_internal(
 }
 
 void info(const char *message, const char *title) {
+#ifndef PRODUCTION
   msg_internal(message, title, INFO, true, false);
+#endif
 }
 
 void info_wnl(const char *message, const char *title) {
+#ifndef PRODUCTION
   msg_internal(message, title, INFO, false, false);
+#endif
 }
 
 void success(const char *message, const char *title) {
+#ifndef PRODUCTION
   msg_internal(message, title, SUCCESS, true, false);
+#endif
 }
 
 void warn(const char *message, const char *title) {
