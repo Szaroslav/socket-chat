@@ -60,6 +60,9 @@ int main() {
         send_udp_message(message);
         continue;
       }
+      if (js_str_equal(message, "")) {
+        continue;
+      }
       send_tcp_message(message);
     }
     if (file_descriptor_pool[TCP_SOCKET_FD_POOL_ID].revents & POLLIN) {
@@ -143,7 +146,10 @@ void handle_sigint(int signal) {
 
 char * input(int mode) {
   if (mode == TCP) {
-    fgets(message, MAX_MESSAGE_SIZE_BYTES, stdin);
+    if (fgets(message, MAX_MESSAGE_SIZE_BYTES, stdin) == NULL) {
+      clearerr(stdin);
+      return "";
+    }
     message[strlen(message) - 1] = '\0';
 
     if (js_str_equal(message, UDP_MODE)) {
@@ -164,12 +170,13 @@ char * input(int mode) {
       }
 
       if (feof(stdin)) {
-        clearerr(stdin);
         break;
       }
     }
     message[i] = '\0';
   }
+
+  clearerr(stdin);
 
   return message;
 }
