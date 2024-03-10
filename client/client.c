@@ -74,7 +74,12 @@ int main() {
           warn("UDP socket is undefined", WARNING_TITLE);
           continue;
         }
-        send_udp_message(active_udp_socket_fd, active_udp_socket_fd == udp_socket_fd ? &server_address : &multicast_address, message);
+        if (active_udp_socket_fd == udp_socket_fd) {
+          send_udp_message(active_udp_socket_fd, &server_address, message);
+        }
+        else if (active_udp_socket_fd == mtc_socket_fd) {
+          send_udp_message(active_udp_socket_fd, &multicast_address, message);
+        }
 
         continue;
       }
