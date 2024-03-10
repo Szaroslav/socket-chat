@@ -20,9 +20,8 @@
 extern u_short UDP_HEADER_SIZE_BYTES;
 
 typedef enum socket_type {
-  TCP           = SOCK_STREAM,
-  UDP           = SOCK_DGRAM,
-  UDP_MULTICAST,
+  TCP = SOCK_STREAM,
+  UDP = SOCK_DGRAM,
 } socket_type;
 
 typedef struct sockaddr sockaddr;
