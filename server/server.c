@@ -189,7 +189,7 @@ void * handle_tcp_connection(void *params) {
     }
 
     sprintf(buffer, "Received message: \"%s\"", message);
-    info(buffer, SERVER_TITLE);
+    info(buffer, INFO_TITLE);
 
     send_message_to_others(message, TCP, connection_id);
   }

@@ -226,12 +226,12 @@ char * input(int mode) {
 
 void send_tcp_message(const char *message) {
   sprintf(buffer, "Sending message via TCP: \"%s\"", message);
-  info(buffer, CLIENT_TITLE);
+  info(buffer, INFO_TITLE);
   js_socket_write(tcp_socket_fd, message, strlen(message) + 1);
 }
 
 void send_udp_message(int socket_fd, struct sockaddr_in *destination, const char *message) {
-  info("Sending message via UDP", CLIENT_TITLE);
+  info("Sending message via UDP", INFO_TITLE);
   int_to_bytes((byte *) buffer, connection_id);
   sprintf(buffer + UDP_HEADER_SIZE_BYTES, "%s", message);
   js_socket_send_to(
