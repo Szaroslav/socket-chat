@@ -1,7 +1,7 @@
 #include "socket.h"
 #include "logger.h"
 
-#include <asm-generic/socket.h>
+#include <sys/socket.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
