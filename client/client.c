@@ -130,9 +130,8 @@ void init() {
   file_descriptor_pool[UDP_SOCKET_FD_POOL_ID].events = POLLIN;
 
   memset(&multicast_address, 0, sizeof(multicast_address));
-  multicast_address.sin_family      = AF_INET;
-  multicast_address.sin_addr.s_addr = INADDR_ANY;
-  multicast_address.sin_port        = htons(PORT + 1);
+  multicast_address.sin_family = AF_INET;
+  multicast_address.sin_port   = htons(PORT + 1);
 
   mtc_socket_fd = js_socket_multicast(
     AF_INET, SOCK_DGRAM, 0, MULTICAST_ADDRESS_IPV4, &multicast_address.sin_addr);

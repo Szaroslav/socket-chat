@@ -27,13 +27,17 @@ typedef enum socket_type {
 
 typedef struct sockaddr sockaddr;
 
+void js_socket_string_address(
+  int domain,
+  const char *address,
+  struct in_addr *destination);
 int  js_socket(int domain, int type, int protocol);
 int  js_socket_multicast(
   int domain,
   int type,
   int protocol,
-  const char *address_string,
-  struct in_addr *address);
+  const char *multicast_address,
+  struct in_addr *multicast_destination_address);
 void js_socket_option(
   int socket_fd,
   int level,
