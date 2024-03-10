@@ -31,7 +31,7 @@
 #define MAX_CONNECTION_ID_LENGTH 2
 
 static bool               exited;
-static char               buffer[BUFSIZ];
+static char               buffer[BUFFER_SIZE_BYTES];
 static char               message[MAX_MESSAGE_SIZE_BYTES];
 static int                tcp_socket_fd;
 static int                udp_socket_fd;

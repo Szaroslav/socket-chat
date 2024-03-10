@@ -16,6 +16,7 @@
 #define        SOCKET_WRITE_FAILURE     -1
 #define        SOCKET_SEND_FAILURE      -1
 #define        MAX_MESSAGE_SIZE_BYTES   8192
+#define        BUFFER_SIZE_BYTES        MAX_MESSAGE_SIZE_BYTES + 512
 #define        MULTICAST_ADDRESS_IPV4   "224.2.1.37"
 extern u_short UDP_HEADER_SIZE_BYTES;
 

@@ -33,7 +33,7 @@
 #define MTC_MODE               "M"
 
 static bool               exited;
-static char               buffer[BUFSIZ];
+static char               buffer[BUFFER_SIZE_BYTES];
 static char               message[MAX_MESSAGE_SIZE_BYTES];
 static int                tcp_socket_fd;
 static int                udp_socket_fd;
@@ -267,7 +267,7 @@ char * receive_udp_message(int socket_fd) {
   const int client_id = bytes_to_int((byte *) message);
   snprintf(
     buffer,
-    BUFSIZ,
+    BUFFER_SIZE_BYTES,
     "%s %s%2d %s\n%s",
     WHTBG,
     CLIENT_TITLE_WITH_ID,
