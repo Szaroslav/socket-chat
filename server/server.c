@@ -29,8 +29,6 @@
 #define TCP_SOCKET_FD_POOL_ID    0
 #define UDP_SOCKET_FD_POOL_ID    1
 #define MAX_CONNECTION_ID_LENGTH 2
-#define WHTBG                    "\e[0;47m"
-#define RESET                    "\e[0m"
 
 static bool               exited;
 static char               buffer[BUFSIZ];

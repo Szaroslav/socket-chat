@@ -3,12 +3,6 @@
 #include <errno.h>
 #include <string.h>
 
-#define WHTBG "\e[0;47m"
-#define BGRBG "\e[0;102m"
-#define YELBG "\e[0;43m"
-#define REDBG "\e[0;41m"
-#define RESET "\e[0m"
-
 typedef enum message_type {
   INFO,
   SUCCESS,
