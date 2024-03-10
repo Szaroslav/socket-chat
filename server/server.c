@@ -223,7 +223,7 @@ void send_message_to_others(const char *message, socket_type type, int connectio
       sprintf(
         buffer,
         "%s %s%2d %s %s",
-        WHTBG, CLIENT_TITLE_WITH_ID, i, RESET, message);
+        WHTBG, CLIENT_TITLE_WITH_ID, connection_id, RESET, message);
       js_socket_write(connections[i].tcp_socket_fd, buffer, strlen(buffer) + 1);
     }
   }
@@ -236,7 +236,7 @@ void send_message_to_others(const char *message, socket_type type, int connectio
       sprintf(
         buffer,
         "%s %s%2d %s\n%s",
-        WHTBG, CLIENT_TITLE_WITH_ID, i, RESET, message);
+        WHTBG, CLIENT_TITLE_WITH_ID, connection_id, RESET, message);
       const sockaddr *client_address
         = (const sockaddr *) &connections[i].udp_client_address;
       js_socket_send_to(
