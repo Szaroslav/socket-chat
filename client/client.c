@@ -153,7 +153,7 @@ void init_udp_socket() {
 void init_mtc_socket() {
   memset(&multicast_address, 0, sizeof(multicast_address));
   multicast_address.sin_family = AF_INET;
-  multicast_address.sin_port   = htons(PORT + 1);
+  multicast_address.sin_port   = htons(MULTICAST_PORT);
 
   memcpy(&multicast_address_any, &multicast_address, sizeof(multicast_address));
   multicast_address_any.sin_addr.s_addr = INADDR_ANY;
