@@ -24,6 +24,8 @@
 
 
 #define SERVER_TITLE             "Server   "
+#define MAIN_THREAD_ID           0
+#define NONTCP_THREADS_COUNT     1
 #define FILE_DESCRIPTORS_COUNT   2
 #define ONLY_TCP_FILE_DESCRIPTOR 1
 #define TCP_SOCKET_FD_POOL_ID    0
@@ -31,8 +33,10 @@
 #define MAX_CONNECTION_ID_LENGTH 2
 
 static bool               exited;
-static char               buffer[BUFFER_SIZE_BYTES];
-static char               message[MAX_MESSAGE_SIZE_BYTES];
+static char               buffers[MAX_ONGOING_CONNECTIONS_COUNT + 1][BUFFER_SIZE_BYTES];
+static char               *buffer = buffers[MAIN_THREAD_ID];
+static char               messages[MAX_ONGOING_CONNECTIONS_COUNT + 1][MAX_MESSAGE_SIZE_BYTES];
+static char               *message = messages[MAIN_THREAD_ID];
 static int                tcp_socket_fd;
 static int                udp_socket_fd;
 static int                udp_connection_id;
@@ -133,6 +137,8 @@ void handle_sigint(int signal) {
 }
 
 void handle_connections() {
+  char *message = messages[MAIN_THREAD_ID];
+
   while (true) {
     js_poll(file_descriptor_pool, FILE_DESCRIPTORS_COUNT, INFINITE_TIMEOUT);
 
@@ -173,6 +179,8 @@ void * handle_tcp_connection(void *params) {
   connection_params *p    = (connection_params *) params;
   const int connection_id = p->id,
             tcp_socket_fd = p->tcp_socket_fd;
+  char *message = messages[connection_id + NONTCP_THREADS_COUNT],
+       *buffer  = buffers[connection_id + NONTCP_THREADS_COUNT];
 
   struct pollfd tcp_socket_poll;
   tcp_socket_poll.fd     = tcp_socket_fd;
@@ -222,6 +230,8 @@ void send_message_to_others(const char *message, socket_type type, int connectio
   info("Sending message to others", INFO_TITLE);
 
   if (type == TCP) {
+    char *buffer = buffers[connection_id + NONTCP_THREADS_COUNT];
+
     for (int i = 0; i < MAX_ONGOING_CONNECTIONS_COUNT; i++) {
       if (!connections[i].tcp_active || i == connection_id) {
         continue;
@@ -235,6 +245,8 @@ void send_message_to_others(const char *message, socket_type type, int connectio
     }
   }
   else if (type == UDP) {
+    char *buffer = buffers[MAIN_THREAD_ID];
+
     const int message_length = strlen(message);
     int_to_bytes((byte *) buffer, connection_id);
 
