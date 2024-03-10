@@ -226,21 +226,21 @@ void send_message_to_others(const char *message, socket_type type, int connectio
     }
   }
   else if (type == UDP) {
+    const int message_length = strlen(message);
+    int_to_bytes((byte *) buffer, connection_id);
+
     for (int i = 0; i < MAX_ONGOING_CONNECTIONS_COUNT; i++) {
       if (!connections[i].udp_active || i == connection_id) {
         continue;
       }
 
-      sprintf(
-        buffer,
-        "%s %s%2d %s\n%s",
-        WHTBG, CLIENT_TITLE_WITH_ID, connection_id, RESET, message);
+      memcpy(buffer + UDP_HEADER_SIZE_BYTES, message, message_length);
       const sockaddr *client_address
         = (const sockaddr *) &connections[i].udp_client_address;
       js_socket_send_to(
         udp_socket_fd,
         buffer,
-        strlen(buffer) + 1,
+        UDP_HEADER_SIZE_BYTES + message_length + 1,
         client_address,
         sizeof(*client_address),
         MSG_DONTWAIT);
