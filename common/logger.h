@@ -8,6 +8,12 @@
 #define WARNING_TITLE "Warning  "
 #define ERROR_TITLE   "Error    "
 
+#define WHTBG         "\e[0;47m"
+#define BGRBG         "\e[0;102m"
+#define YELBG         "\e[0;43m"
+#define REDBG         "\e[0;41m"
+#define RESET         "\e[0m"
+
 void info    (const char *message, const char *title                );
 void info_wnl(const char *message, const char *title                );
 void success (const char *message, const char *title                );

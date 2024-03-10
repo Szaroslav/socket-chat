@@ -3,25 +3,41 @@
 
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <netinet/in.h>
 
-#define SOCKET_SUCCESS               0
-#define SOCKET_FAILURE               -1
-#define SOCKET_UNDEFINED             -1
-#define SOCKET_READ_FAILURE          -1
-#define SOCKET_RECEIVE_FAILURE       -1
-#define SOCKET_WRITE_FAILURE         -1
-#define SOCKET_SEND_FAILURE          -1
-#define MAX_MESSAGE_SIZE_BYTES       4096
+#define        SOCKET_SUCCESS           0
+#define        SOCKET_FAILURE           -1
+#define        SOCKET_MULTICAST_SUCCESS 1
+#define        SOCKET_MULTICAST_INVADDR 0
+#define        SOCKET_MULTICAST_INVFAM  -1
+#define        SOCKET_UNDEFINED         -1
+#define        SOCKET_READ_FAILURE      -1
+#define        SOCKET_RECEIVE_FAILURE   -1
+#define        SOCKET_WRITE_FAILURE     -1
+#define        SOCKET_SEND_FAILURE      -1
+#define        MAX_MESSAGE_SIZE_BYTES   4096
+#define        MULTICAST_ADDRESS_IPV4   "224.2.1.37"
 extern u_short UDP_HEADER_SIZE_BYTES;
 
 typedef enum socket_type {
-  TCP = SOCK_STREAM,
-  UDP = SOCK_DGRAM,
+  TCP           = SOCK_STREAM,
+  UDP           = SOCK_DGRAM,
+  UDP_MULTICAST,
 } socket_type;
 
 typedef struct sockaddr sockaddr;
 
+void js_socket_string_address(
+  int domain,
+  const char *address,
+  struct in_addr *destination);
 int  js_socket(int domain, int type, int protocol);
+int  js_socket_multicast(
+  int domain,
+  int type,
+  int protocol,
+  const char *multicast_address,
+  struct in_addr *multicast_destination_address);
 void js_socket_option(
   int socket_fd,
   int level,

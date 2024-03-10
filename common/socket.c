@@ -1,20 +1,72 @@
 #include "socket.h"
 #include "logger.h"
 
+#include <asm-generic/socket.h>
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 
 u_short UDP_HEADER_SIZE_BYTES = sizeof(int);
+
+void js_socket_string_address(
+  int domain,
+  const char *address,
+  struct in_addr *destination
+) {
+  const int status = inet_pton(domain, address, destination);
+  if (status == SOCKET_MULTICAST_INVADDR) {
+    error("Invalid address", ERROR_TITLE, false);
+    exit(SOCKET_FAILURE);
+  }
+  else if (status == SOCKET_MULTICAST_INVFAM) {
+    error("Invalid address family", ERROR_TITLE, true);
+    exit(SOCKET_MULTICAST_INVFAM);
+  }
+}
 
 int js_socket(int domain, int type, int protocol) {
   const int socket_fd = socket(domain, type, protocol);
   if (socket_fd == SOCKET_FAILURE) {
     error("Socket creation failed", ERROR_TITLE, true);
-    exit(EXIT_FAILURE);
+    exit(SOCKET_FAILURE);
   }
   success("Socket creation succeeded", SUCCESS_TITLE);
+  return socket_fd;
+}
+
+int js_socket_multicast(
+    int domain,
+    int type,
+    int protocol,
+    const char *multicast_address,
+    struct in_addr *multicast_destination_address
+) {
+  const int socket_fd = js_socket(domain, type, protocol);
+
+  const int reuse_address = true;
+  js_socket_option(
+    socket_fd, SOL_SOCKET, SO_REUSEADDR, &reuse_address, sizeof(reuse_address));
+
+  js_socket_string_address(
+    domain, multicast_address, multicast_destination_address);
+  struct in_addr local_address = { .s_addr = INADDR_ANY };
+  struct ip_mreqn multicast_group = {
+    .imr_multiaddr = *multicast_destination_address,
+    .imr_address   = local_address,
+    .imr_ifindex   = 0,
+  };
+  js_socket_option(
+    socket_fd,
+    IPPROTO_IP,
+    IP_ADD_MEMBERSHIP,
+    &multicast_group,
+    sizeof(multicast_group));
+
+  success("Multicast socket creation succeeded", SUCCESS_TITLE);
+
   return socket_fd;
 }
 
