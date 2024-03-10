@@ -230,6 +230,8 @@ char * input(int mode) {
     message[i] = '\0';
   }
 
+  printf(CLEAR_LINE);
+  fflush(stdout);
   clearerr(stdin);
 
   return message;
