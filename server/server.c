@@ -138,7 +138,7 @@ void handle_connections() {
 
     if (file_descriptor_pool[TCP_SOCKET_FD_POOL_ID].revents & POLLIN) {
       const int connection_fd = js_socket_accept(
-      tcp_socket_fd, (sockaddr *) &client_address, &client_address_length);
+        tcp_socket_fd, (sockaddr *) &client_address, &client_address_length);
 
       const int connection_id = js_tcp_connection(
         connections, MAX_ONGOING_CONNECTIONS_COUNT, connection_fd);
@@ -174,10 +174,19 @@ void * handle_tcp_connection(void *params) {
   const int connection_id = p->id,
             tcp_socket_fd = p->tcp_socket_fd;
 
+  struct pollfd tcp_socket_poll;
+  tcp_socket_poll.fd     = tcp_socket_fd;
+  tcp_socket_poll.events = POLLIN;
+
   int_to_bytes((byte *) message, connection_id);
   js_socket_write(tcp_socket_fd, message, MAX_MESSAGE_SIZE_BYTES);
 
   while (true) {
+    js_poll(&tcp_socket_poll, 1, INFINITE_TIMEOUT);
+    if (!(tcp_socket_poll.revents & POLLIN)) {
+      continue;
+    }
+
     js_socket_read(tcp_socket_fd, message, MAX_MESSAGE_SIZE_BYTES);
     info(message, INFO_TITLE);
 
