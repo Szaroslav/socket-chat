@@ -45,6 +45,11 @@ static struct sockaddr_in multicast_address;
 static struct pollfd      file_descriptor_pool[FILE_DESCRIPTORS_COUNT];
 
 void   init                  ();
+void   init_stdin            ();
+void   init_server_address   ();
+void   init_tcp_socket       ();
+void   init_udp_socket       ();
+void   init_mtc_socket       ();
 void   handle_exit           ();
 void   handle_sigint         (int signal);
 char * input                 (int mode);
@@ -101,15 +106,14 @@ void init() {
   atexit(handle_exit);
   js_init_sigint(handle_sigint);
 
-  js_fd_nonblock(STDIN_FILENO);
-  file_descriptor_pool[STDIN_FD_POOL_ID].fd     = STDIN_FILENO;
-  file_descriptor_pool[STDIN_FD_POOL_ID].events = POLLIN;
+  init_stdin();
+  init_server_address();
+  init_tcp_socket();
+  init_udp_socket();
+  init_mtc_socket();
+}
 
-  memset(&server_address, 0, sizeof(server_address));
-  server_address.sin_family      = AF_INET;
-  server_address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  server_address.sin_port        = htons(PORT);
-
+void init_tcp_socket() {
   tcp_socket_fd = js_socket(AF_INET, SOCK_STREAM, 0);
   js_socket_connect(
     tcp_socket_fd, (sockaddr *) &server_address, sizeof(server_address));
@@ -118,7 +122,22 @@ void init() {
   js_fd_nonblock(tcp_socket_fd);
   file_descriptor_pool[TCP_SOCKET_FD_POOL_ID].fd     = tcp_socket_fd;
   file_descriptor_pool[TCP_SOCKET_FD_POOL_ID].events = POLLIN;
+}
 
+void init_stdin() {
+  js_fd_nonblock(STDIN_FILENO);
+  file_descriptor_pool[STDIN_FD_POOL_ID].fd     = STDIN_FILENO;
+  file_descriptor_pool[STDIN_FD_POOL_ID].events = POLLIN;
+}
+
+void init_server_address() {
+  memset(&server_address, 0, sizeof(server_address));
+  server_address.sin_family      = AF_INET;
+  server_address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+  server_address.sin_port        = htons(PORT);
+}
+
+void init_udp_socket() {
   udp_socket_fd = js_socket(AF_INET, SOCK_DGRAM, 0);
   js_udp_hello(
     udp_socket_fd,
@@ -128,7 +147,9 @@ void init() {
   js_fd_nonblock(udp_socket_fd);
   file_descriptor_pool[UDP_SOCKET_FD_POOL_ID].fd     = udp_socket_fd;
   file_descriptor_pool[UDP_SOCKET_FD_POOL_ID].events = POLLIN;
+}
 
+void init_mtc_socket() {
   memset(&multicast_address, 0, sizeof(multicast_address));
   multicast_address.sin_family = AF_INET;
   multicast_address.sin_port   = htons(PORT + 1);
