@@ -46,9 +46,9 @@ int js_socket_multicast(
 ) {
   const int socket_fd = js_socket(domain, type, protocol);
 
-  const int reuse_address = true;
+  const int reuse_port = true;
   js_socket_option(
-    socket_fd, SOL_SOCKET, SO_REUSEADDR, &reuse_address, sizeof(reuse_address));
+    socket_fd, SOL_SOCKET, SO_REUSEPORT, &reuse_port, sizeof(reuse_port));
 
   js_socket_string_address(
     domain, multicast_address, multicast_destination_address);

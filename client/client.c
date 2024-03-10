@@ -42,6 +42,7 @@ static int                active_udp_socket_fd;
 static int                connection_id;
 static struct sockaddr_in server_address;
 static struct sockaddr_in multicast_address;
+static struct sockaddr_in multicast_address_any;
 static struct pollfd      file_descriptor_pool[FILE_DESCRIPTORS_COUNT];
 
 void   init                  ();
@@ -154,10 +155,15 @@ void init_mtc_socket() {
   multicast_address.sin_family = AF_INET;
   multicast_address.sin_port   = htons(PORT + 1);
 
+  memcpy(&multicast_address_any, &multicast_address, sizeof(multicast_address));
+  multicast_address_any.sin_addr.s_addr = INADDR_ANY;
+
   mtc_socket_fd = js_socket_multicast(
     AF_INET, SOCK_DGRAM, 0, MULTICAST_ADDRESS_IPV4, &multicast_address.sin_addr);
   js_socket_bind(
-    mtc_socket_fd, (const struct sockaddr *) &multicast_address, sizeof(multicast_address));
+    mtc_socket_fd,
+    (const struct sockaddr *) &multicast_address_any,
+    sizeof(multicast_address_any));
   js_fd_nonblock(mtc_socket_fd);
   file_descriptor_pool[MTC_SOCKET_FD_POOL_ID].fd     = mtc_socket_fd;
   file_descriptor_pool[MTC_SOCKET_FD_POOL_ID].events = POLLIN;
